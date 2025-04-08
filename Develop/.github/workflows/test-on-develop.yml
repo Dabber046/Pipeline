@@ -1,0 +1,38 @@
+name: Cypress Tests on Pull Request to Develop
+
+on:
+  pull_request:
+    branches: [develop]
+
+jobs:
+  cypress-tests:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: Develop
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install project dependencies
+        run: npm install
+
+      - name: Install client dependencies
+        run: npm install
+        working-directory: Develop/client
+
+      - name: Run Cypress tests
+        run: npm run test:cypress
+
+      - name: Upload Cypress Results
+        uses: actions/upload-artifact@v3
+        with:
+          name: cypress-results
+          path: cypress/videos/
